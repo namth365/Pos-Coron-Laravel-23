@@ -3,10 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\Categories\CreateCategoryRequest;
+use App\Http\Requests\Admin\Categories\UpdateCategoryRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use App\Models\Category;
-use App\Models\Product;
 use Illuminate\Support\Str;
 
 class CategoryController extends Controller
@@ -18,7 +19,6 @@ class CategoryController extends Controller
      */
     public function index()
     {
-
         $categories = Category::paginate(10);
         return view ('admin.categories.index', compact('categories'));
     }
@@ -39,19 +39,8 @@ class CategoryController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(CreateCategoryRequest $request)
     {
-       $request->validate(
-            [
-                'name' => 'required|unique:categories|max:255',
-                'description' => 'required|max:255'
-            ],
-            [
-                'name.unique' => 'Tên thể loại đã có ',
-                'name.required' => 'Phải có tên thể loại',
-                'description.required' => 'Phải có tên mô tả',
-            ]
-        );
         $category = new Category();
         $category->name = $request->input('name');
         $category->slug = Str::slug($category->name,'-');
@@ -59,7 +48,6 @@ class CategoryController extends Controller
         $category->status = $request->input('status');
         $category->save();
 
-        // Session::flash('success', 'Tạo mới thể loại thành công');
         return redirect()->route('categories.index')->with('status','Tạo mới thể loại thành công');
     }
 
@@ -93,19 +81,8 @@ class CategoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(UpdateCategoryRequest $request, $id)
     {
-        $request->validate(
-            [
-                'name' => 'required|unique:categories,name,'.$id.'|max:255',
-                'description' => 'required|max:255'
-            ],
-            [
-                'name.unique' => 'Tên thể loại đã có ',
-                'name.required' => 'Phải có tên thể loại',
-                'description.required' => 'Phải có tên mô tả',
-            ]
-        );
         $category = Category::find($id);
         $category->name = $request->input('name');
         $category->slug = Str::slug($category->name, '-');

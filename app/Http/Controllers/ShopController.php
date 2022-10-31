@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Client\PostRegisterRequest;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Category;
@@ -62,34 +63,13 @@ class ShopController extends Controller
       return view('website.home.register');
    }
 
-   public function postRegister(Request $request){
-     
-      $request->validate( [ 
-               'name' => 'required|max:255',
-               'email' => 'required|unique:customers|max:255',
-               'phone' => 'required|unique:customers|max:255',
-               'address' => 'required|max:255',
-               // 'password' => 'required|confirmed|max:255',
-               // 'password_confirmation' => 'required',
-         ],
-         [
-               'email.unique' => 'Email đã tồn tại',
-               'email.required' => 'Phải có email',
-               'name.required' => 'Phải có tên',
-               'phone.unique' => 'Số điện thoại đã tồn tại',
-               'phone.required' => 'Phải có số điện thoại',
-               'address.required' => 'Phải có địa chỉ',
-               // 'password.required' => 'Phải có mật khẩu',
-               // 'password.confirmed' => 'Mật khẩu không khớp',
-         ]
-      );
-
+   public function postRegister(PostRegisterRequest $request)
+   {
       $customer = new Customer();
       $customer->name = $request->input('name');
       $customer->email = $request->input('email');
       $customer->phone = $request->input('phone');
       $customer->address = $request->input('address');
-      // $customer->password = Hash::make($request->input('password'));
       $customer->save();
 
       return redirect()->route('home')->with('status','Đăng ký thành công');

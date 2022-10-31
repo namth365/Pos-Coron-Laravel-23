@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Client\CompleteCartRequest;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use Illuminate\Support\Facades\Session;
@@ -47,24 +48,9 @@ class CartController extends Controller
         $cart = Session::get('cart');
         return view('website.checkout.index',compact('cart'));
     }
-    public function complete(Request $request)
+    public function complete(CompleteCartRequest $request)
     {
         $cart = Session::get('cart');
-        $request->validate([
-            'name' => 'required|max:255',
-            'phone' =>'required|max:255',
-            'address' => 'required|max:255',
-            'email' => 'required|max:255',
-            // 'password' => 'required|max:255',
-
-        ],
-        [
-            'name.required' => 'Điền tên khách hàng',
-            'phone.required' => 'Điền số điện thoại',
-            'address.required' => 'Điền địa chỉ',
-            'email.required' => 'Điền email',
-            // 'password.required' => 'Điền mật khẩu',
-        ]);
       
         $customer_id = $this->checkCustomerExist($request->phone);
 

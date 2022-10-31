@@ -14,7 +14,6 @@ class Category extends Model
     protected $fillable=[
         'name','slug','description','status',
     ];
-    protected $primaryKey='id';
     public function product_detail(){
         return $this->Hasmany('App\Models\Product');
     }

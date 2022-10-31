@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\Products\CreateProductRequest;
+use App\Http\Requests\Admin\Products\UpdateProductRequest;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Category;
@@ -58,23 +60,8 @@ class ProductController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(CreateProductRequest $request)
     {
-        $request->validate(
-            [
-                'name' => 'required|unique:products|max:255',
-                'sold' => 'required|max:255',
-                'price' => 'required|max:255',
-                'description' => 'required|max:255'
-            ],
-            [
-                'name.unique' => 'Tên sản phẩm đã có ',
-                'name.required' => 'Phải có tên sản phẩm',
-                'sold.required' => 'Phải có số lượng',
-                'price.required' => 'Phải có giá',
-                'description.required' => 'Phải có mô tả sản phẩm',
-            ]
-        );
         $product = new Product();
         $product->name = $request->input('name');
         $product->slug = Str::slug($product->name,'-');
@@ -97,8 +84,6 @@ class ProductController extends Controller
         }
 
         $product->save();
-
-        // Session::flash('success', 'Tạo mới thể loại thành công');
         return redirect()->route('products.index')->with('status','Tạo mới sản phẩm thành công');
     }
 
@@ -121,7 +106,6 @@ class ProductController extends Controller
      */
     public function edit($id)
     {
-
         $product = Product::find($id);
         $category = Category::orderBy('id', 'DESC')->get();
         return view('admin.products.edit',compact('product','category'));
@@ -134,23 +118,8 @@ class ProductController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(UpdateProductRequest $request, $id)
     {
-        $request->validate(
-            [
-                'name' => 'required|unique:products,name,'.$id.'|max:255',
-                'sold' => 'required|max:255',
-                'price' => 'required|max:255',
-                'description' => 'required|max:255',
-            ],
-            [
-                'name.unique' => 'Tên sản phẩm đã có ',
-                'name.required' => 'Phải có tên sản phẩm',
-                'sold.required' => 'Phải có số lượng',
-                'price.required' => 'Phải có giá',
-                'description.required' => 'Phải có mô tả sản phẩm',
-            ]
-        );
         $product = Product::find($id);
         $product->name = $request->input('name');
         $product->slug = Str::slug($product->name,'-');
